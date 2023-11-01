@@ -14,17 +14,38 @@
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer();
+    let baseAlpha = 0;
+    let baseBeta = 0;
+    let baseGamma = 0;
+
+
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0xf0f0f0); // Pale grey
+    renderer.shadowMap.enabled = true;  // Enable shadow rendering
+
     document.body.appendChild(renderer.domElement);
 
-    // Create the "brick" shape
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
+    // Create a phone-shaped tablet geometry
+    const geometry = new THREE.BoxGeometry(0.8, 2, 0.08);
+    const material = new THREE.MeshStandardMaterial({ color: 0x00dddd });
+    material.side = THREE.DoubleSide;
 
-    // Position the camera
-    camera.position.z = 5;
+    const phoneTablet = new THREE.Mesh(geometry, material);
+    phoneTablet.castShadow = true;  // Cast shadows
+
+    // Adding directional light
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(0, 0, 10);
+    directionalLight.castShadow = false;  // Cast shadows
+    scene.add(directionalLight);
+
+    // Highlight edges
+    const edges = new THREE.EdgesGeometry(geometry);
+    const edgeLines = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x000000 }));
+    phoneTablet.add(edgeLines);
+
+    scene.add(phoneTablet);
+    camera.position.z = 4;
 
     // Animation loop
     function animate() {
@@ -33,20 +54,37 @@
     }
     animate();
 
-    // Update cube position and rotation based on device motion
+    // Update phoneTablet position and rotation based on device motion
     if (window.DeviceMotionEvent) {
       document.addEventListener('click', getAccel.bind(this), {once:true, capture:true});
       function getAccel(){
         DeviceMotionEvent.requestPermission().then(response => {
           if (response == 'granted') {
             window.addEventListener("devicemotion", function(event) {
-              cube.rotation.x = event.rotationRate.alpha * 0.0001;
-              cube.rotation.y = event.rotationRate.beta * 0.0001;
-              cube.rotation.z = event.rotationRate.gamma * 0.0001;
+              /*
+              phoneTablet.position.x = event.accelerationIncludingGravity.x;
+              phoneTablet.position.y = event.accelerationIncludingGravity.y;
+              phoneTablet.position.z = event.accelerationIncludingGravity.z;
+              */
+              phoneTablet.position.x = event.acceleration.x;
+              phoneTablet.position.y = event.acceleration.y;
+              phoneTablet.position.z = event.acceleration.z;
+            });
+            window.addEventListener('deviceorientation', event => {
+              const {alpha, beta, gamma} = event;
 
-              cube.position.x = event.accelerationIncludingGravity.x * 0.01;
-              cube.position.y = event.accelerationIncludingGravity.y * 0.01;
-              cube.position.z = event.accelerationIncludingGravity.z * 0.01;
+              Object.assign(phoneTablet.rotation, {
+                z: THREE.Math.degToRad(alpha) - baseAlpha,
+                x: THREE.Math.degToRad(beta) - baseBeta,
+                y: THREE.Math.degToRad(gamma) - baseGamma
+              });
+
+              Object.assign(this.state.accelerometer, {
+                alpha,
+                beta,
+                gamma
+              });
+              this.render();
             });
           }
         });
@@ -54,6 +92,13 @@
     } else {
       alert("Sorry, your device doesn't support Device Motion");
     }
+
+    document.addEventListener('click', function() {
+      baseAlpha = phoneTablet.rotation.z;
+      baseBeta = phoneTablet.rotation.x;
+      baseGamma = phoneTablet.rotation.y;
+    });
+
   </script>
   <script>
     class DeviceSpecs extends HTMLElement {
