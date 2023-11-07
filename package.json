@@ -1,0 +1,26 @@
+{
+  "name": "battlespace-telemetry",
+  "version": "1.0.0",
+  "description": "telemetry for your devices",
+  "main": "bt.js",
+  "scripts": {
+    "test": "serve --ssl-cert ~/sslcerts/fullchain.pem --ssl-key ~/sslcerts/privkey.pem -p 8080"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/00000o1/battlespace-telemetry.git"
+  },
+  "keywords": [
+    "telemetry",
+    "device"
+  ],
+  "author": "@dosy",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/00000o1/battlespace-telemetry/issues"
+  },
+  "homepage": "https://github.com/00000o1/battlespace-telemetry#readme",
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
+}
