@@ -29,7 +29,6 @@ export default class Sensor {
    */
   _enqueueData(data) {
     this.#dataQueue.push(data);
-    console.log('len: ', this.#dataQueue.length);
   }
 
   /**

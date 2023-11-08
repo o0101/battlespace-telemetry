@@ -1,13 +1,13 @@
-import Sensor from './sensors/super.js';
+import Sensor from './sensor/class.js';
 
-export default class SensorStream {
+export default class SensorArray {
   #sensors = [];
   #isStreaming = false;
   #accumulate = false;
   #state = {};
   #delay = 0;
   #animationFrameDelay = false
-  #timestamp = false;
+  #timestamp = true;
 
   constructor(sensorArray = [], opts = {}) {
     for(const sensor of sensorArray) {

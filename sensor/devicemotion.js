@@ -1,4 +1,4 @@
-import Sensor from './super.js';
+import Sensor from './class.js';
 
 /**
  * DeviceMotionSensor extends the Sensor class to handle device motion data.
