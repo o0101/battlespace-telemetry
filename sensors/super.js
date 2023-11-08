@@ -29,13 +29,14 @@ export default class Sensor {
    */
   _enqueueData(data) {
     this.#dataQueue.push(data);
+    console.log('len: ', this.#dataQueue.length);
   }
 
   /**
    * Checks if data is available in the queue.
    * @returns {boolean} True if data is available, false otherwise.
    */
-  async hasData() {
+  hasData() {
     return this.#dataQueue.length > 0;
   }
 

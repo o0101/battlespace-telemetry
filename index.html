@@ -12,8 +12,9 @@
 
     sensorArray.add(dms);
 
+    let i = 0;
     for await ( const state of sensorArray.stream ) {
-      console.log(state);
+      console.log(i++);
     }
 
     
