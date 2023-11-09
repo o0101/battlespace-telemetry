@@ -3,6 +3,8 @@
   import SensorStream from './array.js';
   import DeviceMotionSensor from './sensor/devicemotion.js';
 
+  Object.assign(globalThis, { SensorStream, DeviceMotionSensor });
+
   const sensorArray = new SensorStream();
 
   document.onclick = async () => {
@@ -20,7 +22,5 @@
         console.clear();
       }
     }
-
-    
   };
 </script>
