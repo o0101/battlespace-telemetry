@@ -1,26 +1,77 @@
-<script src=-.js></script>
-<script type=module>
-  import SensorStream from './array.js';
-  import DeviceMotionSensor from './sensor/devicemotion.js';
-
-  Object.assign(globalThis, { SensorStream, DeviceMotionSensor });
-
-  const sensorArray = new SensorStream();
-
-  document.onclick = async () => {
-    const dms = new DeviceMotionSensor();
-
-    console.log(dms);
-
-    sensorArray.add(dms);
-
-    let i = 0;
-    for await ( const state of sensorArray ) {
-      console.log(state); 
-      i++;
-      if ( i % 5 == 0 ) {
-        console.clear();
-      }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sensor Stream Example</title>
+  <style>
+    /* CSS styles here */
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f0f0f0;
     }
-  };
-</script>
+
+    button {
+      padding: 20px 40px;
+      font-size: 1.5em;
+      color: #fff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      outline: none;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <button id="startSensors">Activate Sensors</button>
+  <button id="showData">Show Data</button>
+
+  <script type="module">
+    import SensorStream from './stream.js'; // Assuming this is the correct path
+    import DeviceMotionSensor from './devicemotion.js'; // Corrected the path
+    import BluetoothSensor from './bluetooth.js'; // Corrected the path
+    import GeolocationSensor from './geolocation.js'; // Added the geolocation sensor
+
+    const sensorStream = new SensorStream();
+
+    document.getElementById('startSensors').onclick = async () => {
+      try {
+        // Instantiate the sensors
+        const dms = new DeviceMotionSensor();
+        const bt = new BluetoothSensor();
+        const geo = new GeolocationSensor(); // Create the GeolocationSensor instance
+
+        // Add the sensors to the stream
+        sensorStream.add(dms);
+        sensorStream.add(bt);
+        sensorStream.add(geo); // Add the GeolocationSensor to the stream
+
+        for await (const state of sensorStream) {
+          globalThis.state = state; // Make the state available globally
+          console.log(state);
+        }
+      } catch(e) {
+        console.error(`Error during start sensors`, e);
+      }
+    };
+
+    document.getElementById('showData').onclick = async () => {
+      if (globalThis.state) {
+        console.log(globalThis.state); // Log the latest state when the pointer moves
+        globalThis.state = null;
+      }
+    };
+  </script>
+</body>
+</html>
+

@@ -1,4 +1,4 @@
-import Sensor from './sensor/class.js';
+import Sensor from './sensor.js';
 
 export default class SensorArray {
   #sensors = [];
