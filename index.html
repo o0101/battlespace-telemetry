@@ -44,6 +44,10 @@
     import BluetoothSensor from './bluetooth.js'; 
     import GeolocationSensor from './geolocation.js'; 
     import DeviceProximitySensor from './deviceproximity.js';
+    import ConnectivitySensor from './connectivity.js';
+    import BatterySensor from './battery.js';
+    import OrientationSensor from './orientation.js';
+    import SystemProfileSensor from './profile.js';
 
     const sensorStream = new SensorStream({accumulate:true, timestamp:true});
 
@@ -54,12 +58,20 @@
         const bt = new BluetoothSensor();
         const geo = new GeolocationSensor(); 
         const prox = new DeviceProximitySensor();
+        const cnx = new ConnectivitySensor();
+        const batt = new BatterySensor();
+        const orient = new OrientationSensor();
+        const sys = new SystemProfileSensor();
 
         // Add the sensors to the stream
         sensorStream.add(dms);
         sensorStream.add(bt);
         sensorStream.add(geo); 
         sensorStream.add(prox); 
+        sensorStream.add(cnx); 
+        sensorStream.add(batt);
+        sensorStream.add(orient);
+        sensorStream.add(sys);
 
         for await (const state of sensorStream) {
           globalThis.state = state; // Make the state available globally

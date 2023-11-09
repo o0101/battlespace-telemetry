@@ -31,7 +31,7 @@ export default class SensorArray {
             this.#accumulate = !!value;
           }; break;
           case 'timestamp': {
-            this.timestamp = !!value;
+            this.#timestamp = !!value;
           }; break;
           default: {
             throw new TypeError(`Unknown option: ${key} = ${value}`);
