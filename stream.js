@@ -9,12 +9,20 @@ export default class SensorArray {
   #animationFrameDelay = false
   #timestamp = true;
 
-  constructor(sensorArray = [], opts = {}) {
+  static from(sensorArray) {
+    const instance = new this;
     for(const sensor of sensorArray) {
-      this.add(sensor);
+      if ( sensor instanceof Sensor ) {
+        instance.add(sensor);
+      } else {
+        console.warn(`Object ${sensor} not instance of Sensor`, sensor);
+      }
     }
+  }
+
+  constructor(opts = {}) {
     if ( opts ) {
-      for( [key, value] of Object.entries(opts) ) {
+      for( const [key, value] of Object.entries(opts) ) {
         switch (key) {
           case 'delay': {
             this.delay = value;
@@ -55,6 +63,7 @@ export default class SensorArray {
 
   add(sensor) {
     if (sensor instanceof Sensor && !this.#sensors.includes(sensor)) {
+      sensor.timestamp = this.#timestamp;
       this.#sensors.push(sensor);
     }
   }
@@ -79,7 +88,11 @@ export default class SensorArray {
       // Only include sensors that have data available
       for (const sensor of this.#sensors.filter(s => s.hasData())) {
         const data = await sensor.popData();
-        state = { ...state, ...sensor.extractState(data) };
+        const extract = sensor.extractState(data);
+        if ( this.#timestamp ) {
+          extract[Object.getOwnPropertyNames(extract)[0]].$timestamp = data.$timestamp;
+        }
+        state = { ...state, ...extract  };
       }
 
       if (Object.keys(state).length !== 0) {

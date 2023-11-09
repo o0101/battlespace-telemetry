@@ -86,6 +86,9 @@ export default class Sensor {
    * @param {any} data - The sensor data to be enqueued.
    */
   #_enqueueData(data) {
+    if ( this.timestamp ) {
+      data.$timestamp = Date.now();
+    }
     this.#_dataQueue.push(data);
   }
 

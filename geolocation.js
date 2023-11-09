@@ -8,7 +8,6 @@ export default class GeolocationSensor extends Sensor {
     const api = {};
     super('geolocation', api);
     this.#$ = api;
-    console.log('geolocation');
     this.#queryPermissions();
   }
 

@@ -42,7 +42,7 @@
     import BluetoothSensor from './bluetooth.js'; // Corrected the path
     import GeolocationSensor from './geolocation.js'; // Added the geolocation sensor
 
-    const sensorStream = new SensorStream();
+    const sensorStream = new SensorStream({accumulate:true, timestamp:true});
 
     document.getElementById('startSensors').onclick = async () => {
       try {
@@ -58,7 +58,6 @@
 
         for await (const state of sensorStream) {
           globalThis.state = state; // Make the state available globally
-          console.log(state);
         }
       } catch(e) {
         console.error(`Error during start sensors`, e);
@@ -67,7 +66,8 @@
 
     document.getElementById('showData').onclick = async () => {
       if (globalThis.state) {
-        console.log(globalThis.state); // Log the latest state when the pointer moves
+        console.dir(globalThis.state); 
+        console.log(JSON.stringify(globalThis.state, null, 2));
         globalThis.state = null;
       }
     };
