@@ -13,17 +13,19 @@
       justify-content: center;
       align-items: center;
       background-color: #f0f0f0;
+      flex-direction: column;
     }
 
     button {
-      padding: 20px 40px;
-      font-size: 1.5em;
+      padding: 1.5rem 2.5rem;
+      font-size: 1em;
       color: #fff;
       background-color: #007bff;
       border: none;
       border-radius: 5px;
       cursor: pointer;
       outline: none;
+      margin: 2rem;
       transition: background-color 0.2s;
     }
 
@@ -37,10 +39,11 @@
   <button id="showData">Show Data</button>
 
   <script type="module">
-    import SensorStream from './stream.js'; // Assuming this is the correct path
-    import DeviceMotionSensor from './devicemotion.js'; // Corrected the path
-    import BluetoothSensor from './bluetooth.js'; // Corrected the path
-    import GeolocationSensor from './geolocation.js'; // Added the geolocation sensor
+    import SensorStream from './stream.js'; 
+    import DeviceMotionSensor from './devicemotion.js'; 
+    import BluetoothSensor from './bluetooth.js'; 
+    import GeolocationSensor from './geolocation.js'; 
+    import DeviceProximitySensor from './deviceproximity.js';
 
     const sensorStream = new SensorStream({accumulate:true, timestamp:true});
 
@@ -49,12 +52,14 @@
         // Instantiate the sensors
         const dms = new DeviceMotionSensor();
         const bt = new BluetoothSensor();
-        const geo = new GeolocationSensor(); // Create the GeolocationSensor instance
+        const geo = new GeolocationSensor(); 
+        const prox = new DeviceProximitySensor();
 
         // Add the sensors to the stream
         sensorStream.add(dms);
         sensorStream.add(bt);
-        sensorStream.add(geo); // Add the GeolocationSensor to the stream
+        sensorStream.add(geo); 
+        sensorStream.add(prox); 
 
         for await (const state of sensorStream) {
           globalThis.state = state; // Make the state available globally
