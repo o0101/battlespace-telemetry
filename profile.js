@@ -1,6 +1,20 @@
 import Sensor from './sensor.js';
 
 export default class DeviceProfileSensor extends Sensor {
+  // Browser to OS version mappings
+  safariVersionToOSMap = {
+    '13': { macOS: '10.15+', iOS: '13+' },
+    '14': { macOS: '11+', iOS: '14+' },
+    '15': { macOS: '12+', iOS: '15+' },
+    '16': { macOS: '13+', iOS: '16+' },
+    '16.1': { macOS: '13.1+', iOS: '16.1+' },
+    '16.2': { macOS: '13.2+', iOS: '16.2+' },
+    '16.3': { macOS: '13.3+', iOS: '16.3+' },
+    '16.4': { macOS: '13.4+', iOS: '16.4+' },
+    '16.5': { macOS: '13.5+', iOS: '16.5+' },
+    '16.6': { macOS: '13.6+', iOS: '16.7.2+' },
+    '17.1': { macOS: '13.6.1+', iOS: '17.1+' },
+  };
   #$ = null;
 
   constructor() {
@@ -34,6 +48,19 @@ export default class DeviceProfileSensor extends Sensor {
     return {...profile, ...osInfo, ...browserInfo};
   }
 
+  // Function to derive OS version from browser version
+  deriveOSVersionFromBrowser(browserName, browserVersion) {
+    let osVersion;
+    if (browserName === 'Safari') {
+      if (this.safariVersionToOSMap[browserVersion]) {
+        const osName = /iPhone|iPad|iPod/.test(navigator.userAgent) ? 'iOS' : 'macOS';
+        osVersion = this.safariVersionToOSMap[browserVersion][osName];
+      }
+    }
+    // Add similar logic for other browsers if needed
+    return `${osVersion} (maybe)`;
+  }
+
   async getOS() {
     let osName = 'Unknown OS';
     let osVersion = '';
@@ -52,9 +79,17 @@ export default class DeviceProfileSensor extends Sensor {
     // Fallback to userAgentData or userAgent string
     if (!osVersion) {
       osName = this.parseOSFromUserAgent(navigator.userAgent);
+      // If we have a valid browser version, attempt to derive the OS version
+      const browserInfo = await this.getBrowser();
+      if (browserInfo.browserVersion) {
+        const derivedOSVersion = this.deriveOSVersionFromBrowser(browserInfo.browser, browserInfo.browserVersion);
+        if (derivedOSVersion) {
+          osVersion = derivedOSVersion;
+        }
+      }
     }
 
-    return { os: osName, osVersion: osVersion || '(maybe)' };
+    return { os: osName, osVersion: osVersion || '(unknown)' };
   }
 
   async getBrowser() {
@@ -88,7 +123,7 @@ export default class DeviceProfileSensor extends Sensor {
     if (navigator.userAgentData && typeof navigator.userAgentData.getHighEntropyValues === 'function') {
       try {
         const { architecture } = await navigator.userAgentData.getHighEntropyValues(['architecture']);
-        return architecture || 'Unknown architecture';
+        return architecture ? architecture.toLocaleUpperCase() : 'Unknown architecture';
       } catch (error) {
         console.error('Error getting high entropy values for architecture:', error);
       }
