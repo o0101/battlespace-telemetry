@@ -44,7 +44,9 @@ export default class GeolocationSensor extends Sensor {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
           altitude: position.coords.altitude,
-          accuracy: position.coords.accuracy
+          accuracy: position.coords.accuracy,
+          deviceTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          deviceTimeNow: (new Date).toString()
         });
       },
       error => {
@@ -60,12 +62,7 @@ export default class GeolocationSensor extends Sensor {
 
   extractState(data) {
     return {
-      geolocation: {
-        latitude: data.latitude,
-        longitude: data.longitude,
-        altitude: data.altitude,
-        accuracy: data.accuracy
-      }
+      geolocation: data
     };
   }
 }

@@ -53,6 +53,18 @@ export default class ConnectivitySensor extends Sensor {
   }
 
   extractState(data) {
+    const {connection} = data;
+    if ( connection ) {
+      if ( connection.downlink ) {
+        connection.downlink = `${connection.downlink} Mbps`;
+      }
+      if ( connection.downlinkMax ) {
+        connection.downlinkMax = `${connection.downlinkMax} Mbps`;
+      }
+      if ( connection.rtt ) {
+        connection.rtt = `${connection.rtt} ms`;
+      }
+    }
     // Here we just return the data as is, since it's already in a good format
     return {
       connectivity: data
