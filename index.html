@@ -17,26 +17,41 @@
     }
 
     button {
-      padding: 1.5rem 2.5rem;
-      font-size: 1em;
+      font-size: 0.9em;
+      padding: 0.5em 1em;
       color: #fff;
       background-color: #007bff;
       border: none;
       border-radius: 5px;
       cursor: pointer;
       outline: none;
-      margin: 2rem;
+      margin: 1em 0.125em;
       transition: background-color 0.2s;
     }
 
-    button:hover {
+    button[disabled] {
+      background: lightgrey;
+      cursor: cancel;
+    }
+
+    button:not([disabled]):hover {
       background-color: #0056b3;
+    }
+
+    textarea {
+      max-width: 100%;
+      width: 80vw;
+      min-height: 300px;
+      max-height: 62vh;
     }
   </style>
 </head>
 <body>
-  <button id="startSensors">Activate Sensors</button>
-  <button id="showData">Show Data</button>
+  <textarea id=log></textarea>
+  <aside>
+    <button id="startSensors">Activate Sensors</button>
+    <button id="showData">Show New Data</button>
+  </aside>
 
   <script type="module">
     import SensorStream from './stream.js'; 
@@ -51,11 +66,17 @@
 
     const sensorStream = new SensorStream({accumulate:true, timestamp:true});
 
-    document.getElementById('startSensors').onclick = async () => {
+    const startSensors = document.getElementById('startSensors');
+    const showData = document.getElementById('showData');
+    showData.disabled = true;
+
+    startSensors.onclick = async () => {
+      startSensors.disabled = true;
+
       try {
         // Instantiate the sensors
         const dms = new DeviceMotionSensor();
-        const bt = new BluetoothSensor();
+        //const bt = new BluetoothSensor();
         const geo = new GeolocationSensor(); 
         const prox = new DeviceProximitySensor();
         const cnx = new ConnectivitySensor();
@@ -65,7 +86,7 @@
 
         // Add the sensors to the stream
         sensorStream.add(dms);
-        sensorStream.add(bt);
+        //sensorStream.add(bt);
         sensorStream.add(geo); 
         sensorStream.add(prox); 
         sensorStream.add(cnx); 
@@ -75,19 +96,31 @@
 
         for await (const state of sensorStream) {
           globalThis.state = state; // Make the state available globally
+          showData.disabled = false;
         }
       } catch(e) {
         console.error(`Error during start sensors`, e);
+        startSensors.disabled = false;
       }
     };
 
-    document.getElementById('showData').onclick = async () => {
+    showData.onclick = async () => {
       if (globalThis.state) {
-        console.dir(globalThis.state); 
-        console.log(JSON.stringify(globalThis.state, null, 2));
+        appendLog(JSON.stringify(globalThis.state, null, 2));
         globalThis.state = null;
+        showData.disabled = true;
       }
     };
+
+    function appendLog(newLog) {
+      const logElement = document.getElementById('log');
+      const currentValue = logElement.value;
+      if ( currentValue.slice(-1) == ']' ) {
+        logElement.value = currentValue.slice(0, -1);
+      }
+      logElement.value += `${currentValue.length == 0 ? '[' : ',\n'}` + newLog + `]`; // Append new log with a newline
+      logElement.scrollTo({ top: logElement.scrollHeight, behavior: 'smooth' }); // Smooth scroll to bottom
+    }
   </script>
 </body>
 </html>
