@@ -23,11 +23,11 @@ The ultimate purpose as envisaged is the provision of data for sensor visualizat
 
 It is not intended to be used in any way for tracking, fingerprinting and the like, but indeed it could be used in such a way, and yet it does not significantly enhance the latent capability of existing browser APIs merely by existing. 
 
-Regardless of that, it is expected that people will react to this as if it were a byzantine abomination of cruelty and malice, intended solely to pry from their private decies their most intimate secrets and target them with ads, malware and worse.
+Regardless of that, it is expected that people will react to this as if it were a byzantine abomination of cruelty and malice, intended solely to pry from their private devices their most intimate secrets and target them with ads, malware and worse.
 
 Indeed, it is none of these things, but it will be seen that way by some. It is important to remember that the code and the live demo are comprised solely of client-side JavaScript that makes no calls to any external APIs, and run completely on your device without exception. All data provided by the sensors already existing on your device is display solely on the textarea in the middle of your screen, nowhere else.
 
-Fears of tracking are understandable, but in this case are unwarranted. Fears that this could be used by bad actors for tracking are justified, but could be considered somewhat misplaced given that the code does not attempt to circumvent any permissions, and does nothing more than unify data available from device sensors and wrap their diverse APIs in a more unified interface.
+Fears of tracking are understandable, but in this case are unwarranted. Fears that this could be used by bad actors for tracking are justified, but could be considered somewhat misplaced given that the code does not attempt to circumvent any permissions, and does nothing more than unify data available from existing device sensors and wrap their diverse APIs in a more unified interface.
 
 # Why did you create it?
 
